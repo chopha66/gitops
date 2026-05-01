@@ -1,0 +1,159 @@
+global:
+  imagePullSecrets: []
+  image:
+    registry: ""
+    vm:
+      tag: ""
+  cluster:
+    dnsDomain: cluster.local.
+
+vmselect:
+  enabled: true
+  name: ""
+  image:
+    registry: ""
+    repository: victoriametrics/vmselect
+    tag: ""
+    pullPolicy: IfNotPresent
+    variant: cluster
+  lifecycle: {}
+  ports:
+    name: "http"
+  extraArgs:
+    envflag.enable: true
+    envflag.prefix: VM_
+    loggerFormat: json
+    httpListenAddr: :8481
+    search.maxQueryDuration: 5m
+    search.maxConcurrentRequests: 16
+
+  tolerations: []
+  nodeSelector: {}
+  affinity: {}
+  resources: {}
+
+  cacheMountPath: /cache
+
+  ingress:
+    enabled: false
+    annotations: {}
+    hosts:
+      - name: vmselect.local
+        path:
+          - /select
+        port: http
+    tls: []
+    ingressClassName: ""
+    pathType: Prefix
+
+  mode: deployment
+
+  deployment:
+    spec:
+      strategy: {}
+        # rollingUpdate:
+        #  maxSurge: 25%
+        #  maxUnavailable: 25%
+        # type: RollingUpdate
+
+  persistentVolume:
+    enabled: true
+    name: ""
+    accessModes:
+      - ReadWriteOnce
+    volumeAttributesClassName:
+    annotations: {}
+    size: 2Gi
+
+vminsert:
+  enabled: true
+  name: ""
+  strategy: {}
+   # rollingUpdate:
+   #  maxSurge: 25%
+   #  maxUnavailable: 25%
+   # type: RollingUpdate
+  image:
+    registry: ""
+    repository: victoriametrics/vminsert
+    tag: ""
+    variant: cluster
+    pullPolicy: IfNotPresent
+  ports:
+    name: "http"
+  relabel:
+    enabled: false
+    config: []
+    configMap: ""
+
+  tolerations: []
+  nodeSelector: {}
+  affinity: {}
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 500m
+      memory: 512Mi
+      limits:
+        memory: 2Gi
+
+  service:
+    enabled: true
+    clusterIP: ""
+    servicePort: 8480
+    targetPort: http
+    type: ClusterIP
+
+vmstorage:
+  enabled: true
+  name: ""
+  image:
+    registry: ""
+    repository: victoriametrics/vmstorage
+    tag: ""
+    variant: cluster
+    pullPolicy: IfNotPresent
+  lifecycle: {}
+  ports:
+    name: "http"
+
+  extraArgs:
+    envflag.enable: true
+    envflag.prefix: VM_
+    loggerFormat: json
+    httpListenAddr: :8482
+    dedup.minScrapeInterval: 30s
+
+  tolerations: []
+  nodeSelector: {}
+  affinity: {}
+
+  persistentVolume:
+    enabled: true
+    name: ""
+    accessModes:
+      - ReadWriteOnce
+    storageClassName: ""
+    mountPath: /storage
+    size: 10Gi
+
+  replicaCount: 3
+  podManagementPolicy: OrderedReady
+
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+      limits:
+        memory: 4Gi
+
+  service:
+    enabled: true
+    type: ClusterIP
+    servicePort: 8482
+    vminsertPort: 8400
+    vmselectPort: 8401
+
+  vmbackupmanager:
+    enabled: false
+
