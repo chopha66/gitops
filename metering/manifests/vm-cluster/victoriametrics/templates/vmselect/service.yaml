@@ -1,0 +1,28 @@
+---
+# Source: victoriametrics/templates/vmselect/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: metering-victoriametrics-vmselect
+  namespace: "default"
+  labels:
+    app.kubernetes.io/instance: metering
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: victoriametrics
+    app.kubernetes.io/version: 1.124.0
+    helm.sh/chart: victoriametrics-0.1.31
+    app.kubernetes.io/part-of: victoriametrics
+    app.kubernetes.io/component: vmselect
+spec:
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: http
+      port: 8481
+      protocol: TCP
+      nodePort: null
+      targetPort: http
+  selector:
+    app.kubernetes.io/instance: metering
+    app.kubernetes.io/name: victoriametrics
+    app.kubernetes.io/component: vmselect
