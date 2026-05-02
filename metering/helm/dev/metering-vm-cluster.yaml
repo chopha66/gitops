@@ -185,7 +185,7 @@ vmalert:
     - "-evaluationInterval=30s"
     - "-external.label=cluster=central"
 
-  existingRulesConfigMap: ""
+  existingRulesConfigMap: "vmalert-config"
 
   metrics:
     enabled: true

@@ -24,8 +24,6 @@ spec:
       app.kubernetes.io/component: vmalert
   template:
     metadata:
-      annotations:
-        checksum/rules-config: fffbe2e03112bd9532657a838c32c34a07f1f1d01cefcedc0802136b030dad65
       labels:
         app.kubernetes.io/instance: metering
         app.kubernetes.io/managed-by: Helm
@@ -122,4 +120,4 @@ spec:
       volumes:
         - name: rules-configuration
           configMap:
-            name: metering-victoriametrics-vmalert
+            name: vmalert-config

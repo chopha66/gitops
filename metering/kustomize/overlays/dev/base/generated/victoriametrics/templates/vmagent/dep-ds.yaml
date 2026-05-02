@@ -124,6 +124,6 @@ spec:
       volumes:
         - name: scrape-configuration
           configMap:
-            name: vm-agent
+            name: vmagent-scrape-config
         - name: empty-dir
           emptyDir: {}

@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vmalert-config
+  namespace: metering
+data:
+  recording.yaml: |
+    groups:
+      - name: pod-recording
+        interval: 30s
+        rules:
+          - record: pod:cpu_usage:rate5m
+            expr: |
+              sum by (namespace, pod) (
+                rate(container_cpu_usage_seconds_total[5m])
+              )
+
+          - record: pod:cpu_usage_avg:5m
+            expr: avg_over_time(pod:cpu_usage:rate5m[5m])
+
+          - record: pod:memory_working_set:bytes
+            expr: |
+              sum by (namespace, pod) (
+                container_memory_working_set_bytes
+              )
