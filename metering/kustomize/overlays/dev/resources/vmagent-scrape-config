@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vmagent-scrape-config
+  namespace: metering
+data:
+  scrape.yaml: |
+    global:
+      scrape_interval: 30s
+      scrape_timeout: 10s
+      external_labels:
+        monitor: vm-central
+
+    scrape_configs:
+      # ===== Pod CPU =====
+      - job_name: 'pod-cpu'
+        kubernetes_sd_configs:
+          - role: node
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - target_label: __address__
+            replacement: kubernetes.default.svc:443
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: /api/v1/nodes/$1/proxy/metrics/cadvisor
+          - source_labels: [__meta_kubernetes_node_name]
+            target_label: node
+        metric_relabel_configs:
+          - source_labels: [__name__]
+            regex: 'container_cpu_usage_seconds_total'
+            action: keep
+          - source_labels: [container]
+            regex: ''
+            action: drop
+          - source_labels: [container]
+            regex: 'POD'
+            action: drop
+
+      # ===== Pod Memory =====
+      - job_name: 'pod-memory'
+        kubernetes_sd_configs:
+          - role: node
+        scheme: https
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          insecure_skip_verify: true
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - target_label: __address__
+            replacement: kubernetes.default.svc:443
+          - source_labels: [__meta_kubernetes_node_name]
+            regex: (.+)
+            target_label: __metrics_path__
+            replacement: /api/v1/nodes/$1/proxy/metrics/cadvisor
+          - source_labels: [__meta_kubernetes_node_name]
+            target_label: node
+        metric_relabel_configs:
+          - source_labels: [__name__]
+            regex: 'container_memory_working_set_bytes'
+            action: keep
+          - source_labels: [container]
+            regex: ''
+            action: drop
+          - source_labels: [container]
+            regex: 'POD'
+            action: drop

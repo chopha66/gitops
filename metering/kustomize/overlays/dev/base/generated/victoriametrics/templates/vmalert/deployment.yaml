@@ -1,0 +1,125 @@
+---
+# Source: victoriametrics/templates/vmalert/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metering-victoriametrics-vmalert
+  namespace: "metering"
+  labels:
+    app.kubernetes.io/instance: metering
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: victoriametrics
+    app.kubernetes.io/version: 1.124.0
+    helm.sh/chart: victoriametrics-0.1.31
+    app.kubernetes.io/part-of: victoriametrics
+    app.kubernetes.io/component: vmalert
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: metering
+      app.kubernetes.io/name: victoriametrics
+      app.kubernetes.io/component: vmalert
+  template:
+    metadata:
+      annotations:
+        checksum/rules-config: fffbe2e03112bd9532657a838c32c34a07f1f1d01cefcedc0802136b030dad65
+      labels:
+        app.kubernetes.io/instance: metering
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: victoriametrics
+        app.kubernetes.io/version: 1.124.0
+        helm.sh/chart: victoriametrics-0.1.31
+        app.kubernetes.io/part-of: victoriametrics
+        app.kubernetes.io/component: vmalert
+    spec:
+      serviceAccountName: metering-victoriametrics-vmalert
+      
+      automountServiceAccountToken: true
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: metering
+                    app.kubernetes.io/name: victoriametrics
+                    app.kubernetes.io/component: vmalert
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      containers:
+        - name: vmalert
+          image: docker.io/bitnami/victoriametrics-vmalert:1.124.0-debian-12-r0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          args:
+            - --envflag.enable
+            - --envflag.prefix=VM_
+            - --loggerFormat=json
+            - --httpListenAddr=:8429
+            - --rule=/config/alert-rules.yaml
+            - --remoteWrite.url=http://metering-victoriametrics-vminsert:8480/insert/0/prometheus
+            - --remoteWrite.url=http://metering-victoriametrics-vminsert:8480/select/0/prometheus
+            - --datasource.url=http://vm-vmselect.metering.svc.cluster.local:8481/select/0/prometheus
+            - -remoteWrite.url=http://vm-vminsert.metering.svc.cluster.local:8480/insert/0/prometheus
+            - -remoteRead.url=http://vm-vmselect.metering.svc.cluster.local:8481/select/0/prometheus
+            - -evaluationInterval=30s
+            - -external.label=cluster=central
+          env:
+          envFrom:
+          resources:
+            limits:
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          ports:
+            - name: http
+              containerPort: 8429
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            tcpSocket:
+              port: http
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            httpGet:
+              path: /health
+              port: http
+          volumeMounts:
+            - name: rules-configuration
+              mountPath: /config
+      volumes:
+        - name: rules-configuration
+          configMap:
+            name: metering-victoriametrics-vmalert

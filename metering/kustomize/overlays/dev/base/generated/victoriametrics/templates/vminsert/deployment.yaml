@@ -1,0 +1,113 @@
+---
+# Source: victoriametrics/templates/vminsert/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metering-victoriametrics-vminsert
+  namespace: "metering"
+  labels:
+    app.kubernetes.io/instance: metering
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: victoriametrics
+    app.kubernetes.io/version: 1.124.0
+    helm.sh/chart: victoriametrics-0.1.31
+    app.kubernetes.io/part-of: victoriametrics
+    app.kubernetes.io/component: vminsert
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: metering
+      app.kubernetes.io/name: victoriametrics
+      app.kubernetes.io/component: vminsert
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: metering
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: victoriametrics
+        app.kubernetes.io/version: 1.124.0
+        helm.sh/chart: victoriametrics-0.1.31
+        app.kubernetes.io/part-of: victoriametrics
+        app.kubernetes.io/component: vminsert
+    spec:
+      serviceAccountName: metering-victoriametrics-vminsert
+      
+      automountServiceAccountToken: false
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: metering
+                    app.kubernetes.io/name: victoriametrics
+                    app.kubernetes.io/component: vminsert
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      containers:
+        - name: vminsert
+          image: docker.io/bitnami/victoriametrics-vminsert:1.124.0-debian-12-r0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          args:
+            - --envflag.enable
+            - --envflag.prefix=VM_
+            - --loggerFormat=json
+            - --httpListenAddr=:8480
+            - --storageNode=metering-victoriametrics-vmstorage-0.metering-victoriametrics-vmstorage-headless:8400
+            - --storageNode=metering-victoriametrics-vmstorage-1.metering-victoriametrics-vmstorage-headless:8400
+            - --storageNode=metering-victoriametrics-vmstorage-2.metering-victoriametrics-vmstorage-headless:8400
+            - -replicationFactor=3
+            - -maxLabelsPerTimeseries=40
+          env:
+          envFrom:
+          resources:
+            limits:
+              memory: 1Gi
+            requests:
+              cpu: 200m
+              memory: 256Mi
+          ports:
+            - name: http
+              containerPort: 8480
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            tcpSocket:
+              port: http
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            httpGet:
+              path: /health
+              port: http

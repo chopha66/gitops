@@ -25,7 +25,7 @@ vmselect:
     limits:
       memory: 1Gi
 
-  kind: "deployment"
+  kind: deployment
 
   extraArgs:
     - "-search.maxQueryDuration=5m"
@@ -60,62 +60,8 @@ vmselect:
     extraIngress: []
     extraEgress: []
 
-  ## @section VictoriaMetrics Select Metrics Parameters
-  ##
-  ## Prometheus metrics
-  ##
   metrics:
-    ## @param vmselect.metrics.enabled Enable the export of Prometheus metrics
-    ##
-    enabled: false
-    ## @param vmselect.metrics.annotations Additional custom annotations for the service
-    ##
-    annotations: {}
-    ## Prometheus Operator ServiceMonitor configuration
-    ##
-    serviceMonitor:
-      ## @param vmselect.metrics.serviceMonitor.enabled if `true`, creates a Prometheus Operator ServiceMonitor (also requires `metrics.enabled` to be `true`)
-      ##
-      enabled: false
-      ## @param vmselect.metrics.serviceMonitor.namespace Namespace in which Prometheus is running
-      ##
-      namespace: ""
-      ## @param vmselect.metrics.serviceMonitor.annotations Additional custom annotations for the ServiceMonitor
-      ##
-      annotations: {}
-      ## @param vmselect.metrics.serviceMonitor.labels Extra labels for the ServiceMonitor
-      ##
-      labels: {}
-      ## @param vmselect.metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in Prometheus
-      ##
-      jobLabel: ""
-      ## @param vmselect.metrics.serviceMonitor.honorLabels honorLabels chooses the metric's labels on collisions with target labels
-      ##
-      honorLabels: false
-      ## @param vmselect.metrics.serviceMonitor.interval Interval at which metrics should be scraped.
-      ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
-      ## e.g:
-      ## interval: 10s
-      ##
-      interval: ""
-      ## @param vmselect.metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended
-      ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
-      ## e.g:
-      ## scrapeTimeout: 10s
-      ##
-      scrapeTimeout: ""
-      ## @param vmselect.metrics.serviceMonitor.metricRelabelings Specify additional relabeling of metrics
-      ##
-      metricRelabelings: []
-      ## @param vmselect.metrics.serviceMonitor.relabelings Specify general relabeling
-      ##
-      relabelings: []
-      ## @param vmselect.metrics.serviceMonitor.selector Prometheus instance selector labels
-      ## ref: https://github.com/bitnami/charts/tree/main/bitnami/prometheus-operator#prometheus-configuration
-      ## selector:
-      ##   prometheus: my-prometheus
-      ##
-      selector: {}
+    enabled: true
 
 ## @section VictoriaMetrics Insert Parameters
 ##
@@ -139,7 +85,7 @@ vminsert:
   extraArgs:
     - "-replicationFactor=3"
     - "-maxLabelsPerTimeseries=40"
-    -
+
   pdb:
     create: true
     minAvailable: ""
@@ -147,6 +93,9 @@ vminsert:
 
   affinity: {}
   tolerations: []
+
+  metrics:
+    enabled: true
 
   networkPolicy:
     enabled: true
@@ -185,6 +134,9 @@ vmstorage:
   nodeSelector: {}
   tolerations: []
 
+  metrics:
+    enabled: true
+
   networkPolicy:
     enabled: true
     allowExternal: true
@@ -202,10 +154,6 @@ vmstorage:
     dataSource: {}
 
 vmauth:
-  enabled: false
-
-## @section VictoriaMetrics Agent Parameters
-vmagent:
   enabled: false
 
 ## @section VictoriaMetrics Alert Parameters
@@ -232,12 +180,15 @@ vmalert:
   notifierUrl: ""
 
   extraArgs:
-    - "-remoteWrite.url=http://vm-vminsert.monitoring.svc.cluster.local:8480/insert/0/prometheus"
-    - "-remoteRead.url=http://vm-vmselect.monitoring.svc.cluster.local:8481/select/0/prometheus"
+    - "-remoteWrite.url=http://vm-vminsert.metering.svc.cluster.local:8480/insert/0/prometheus"
+    - "-remoteRead.url=http://vm-vmselect.metering.svc.cluster.local:8481/select/0/prometheus"
     - "-evaluationInterval=30s"
     - "-external.label=cluster=central"
 
   existingRulesConfigMap: ""
+
+  metrics:
+    enabled: true
 
   networkPolicy:
     enabled: true
@@ -245,3 +196,51 @@ vmalert:
     allowExternalEgress: true
     extraIngress: []
     extraEgress: []
+
+## @section VictoriaMetrics Agent Parameters
+vmagent:
+  enabled: true
+
+  image:
+    registry: docker.io
+    repository: bitnami/victoriametrics-vmagent
+    tag: 1.124.0-debian-12-r0
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+
+  replicaCount: 3
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 512Mi
+    limits:
+      memory: 2Gi
+
+  kind: deployment
+
+  extraArgs:
+    - "-promscrape.cluster.membersCount=3"
+    - "-promscrape.cluster.replicationFactor=1"
+    - "-remoteWrite.url=http://vm-vminsert.monitoring.svc.cluster.local:8480/insert/0/prometheus"
+    - "-remoteWrite.maxDiskUsagePerURL=500MB"
+    - "-remoteWrite.queues=8"
+    - "-remoteWrite.label=monitor=vm-central"
+
+  existingScrapeConfigMap: "vmagent-scrape-config"
+
+  affinity: {}
+  nodeSelector: {}
+  tolerations: []
+
+  networkPolicy:
+    enabled: true
+    allowExternal: true
+    allowExternalEgress: true
+    extraIngress: []
+    extraEgress: []
+    ingressNSMatchLabels: {}
+    ingressNSPodMatchLabels: {}
+
+  metrics:
+    enabled: true

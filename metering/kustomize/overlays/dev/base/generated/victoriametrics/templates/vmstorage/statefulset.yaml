@@ -1,0 +1,135 @@
+---
+# Source: victoriametrics/templates/vmstorage/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: metering-victoriametrics-vmstorage
+  namespace: "metering"
+  labels:
+    app.kubernetes.io/instance: metering
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: victoriametrics
+    app.kubernetes.io/version: 1.124.0
+    helm.sh/chart: victoriametrics-0.1.31
+    app.kubernetes.io/part-of: victoriametrics
+    app.kubernetes.io/component: vmstorage
+spec:
+  replicas: 3
+  serviceName: metering-victoriametrics-vmstorage-headless
+  podManagementPolicy: Parallel
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: metering
+      app.kubernetes.io/name: victoriametrics
+      app.kubernetes.io/part-of: victoriametrics
+      app.kubernetes.io/component: vmstorage
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: metering
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: victoriametrics
+        app.kubernetes.io/version: 1.124.0
+        helm.sh/chart: victoriametrics-0.1.31
+        app.kubernetes.io/part-of: victoriametrics
+        app.kubernetes.io/component: vmstorage
+    spec:
+      serviceAccountName: metering-victoriametrics-vmstorage
+      
+      automountServiceAccountToken: false
+      affinity:
+        podAffinity:
+          
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchLabels:
+                    app.kubernetes.io/instance: metering
+                    app.kubernetes.io/name: victoriametrics
+                    app.kubernetes.io/component: vmstorage
+                topologyKey: kubernetes.io/hostname
+              weight: 1
+        nodeAffinity:
+          
+      securityContext:
+        fsGroup: 1001
+        fsGroupChangePolicy: Always
+        supplementalGroups: []
+        sysctls: []
+      containers:
+        - name: vmstorage
+          image: docker.io/bitnami/victoriametrics-vmstorage:1.124.0-debian-12-r0
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+            seLinuxOptions: {}
+            seccompProfile:
+              type: RuntimeDefault
+          args:
+            - --envflag.enable
+            - --envflag.prefix=VM_
+            - --loggerFormat=json
+            - --httpListenAddr=:8482
+            - --vminsertAddr=:8400
+            - --vmselectAddr=:8401
+            - --retentionPeriod=3
+            - --storageDataPath=/data
+          env:
+          envFrom:
+          resources:
+            limits:
+              memory: 4Gi
+            requests:
+              cpu: 500m
+              memory: 1Gi
+          ports:
+            - name: http
+              containerPort: 8482
+            - name: tcp-vminsert
+              containerPort: 8400
+            - name: tcp-vmselect
+              containerPort: 8401
+          livenessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            tcpSocket:
+              port: http
+          readinessProbe:
+            failureThreshold: 5
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 5
+            httpGet:
+              path: /health
+              port: http
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: data
+        annotations:
+      spec:
+        accessModes:
+          - "ReadWriteOnce"
+        resources:
+          requests:
+            storage: "10Gi"
