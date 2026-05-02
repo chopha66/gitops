@@ -5,5 +5,5 @@ namespace: metering
 
 resources:
   - base
-  - resources/vmagent-scrape-config
-  - resources/vmalert-config
+  - resources/vmagent-scrape-config.yaml
+  - resources/vmalert-config.yaml
