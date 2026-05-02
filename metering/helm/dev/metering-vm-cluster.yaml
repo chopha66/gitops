@@ -12,7 +12,7 @@ loggerFormat: json
 vmselect:
   image:
     registry: docker.io
-    repository: bitnami/victoriametrics-vmselect
+    repository: bitnamilegacy/victoriametrics-vmselect
     tag: 1.124.0-debian-12-r0
     pullPolicy: IfNotPresent
 
@@ -68,7 +68,7 @@ vmselect:
 vminsert:
   image:
     registry: docker.io
-    repository: bitnami/victoriametrics-vminsert
+    repository: bitnamilegacy/victoriametrics-vminsert
     tag: 1.124.0-debian-12-r0
     pullPolicy: IfNotPresent
     pullSecrets: []
@@ -109,7 +109,7 @@ vminsert:
 vmstorage:
   image:
     registry: docker.io
-    repository: bitnami/victoriametrics-vmstorage
+    repository: bitnamilegacy/victoriametrics-vmstorage
     tag: 1.124.0-debian-12-r0
     pullPolicy: IfNotPresent
     pullSecrets: []
@@ -161,7 +161,7 @@ vmalert:
   enabled: true
   image:
     registry: docker.io
-    repository: bitnami/victoriametrics-vmalert
+    repository: bitnamilegacy/victoriametrics-vmalert
     tag: 1.124.0-debian-12-r0
     pullPolicy: IfNotPresent
     pullSecrets: []
@@ -203,7 +203,7 @@ vmagent:
 
   image:
     registry: docker.io
-    repository: bitnami/victoriametrics-vmagent
+    repository: bitnamilegacy/victoriametrics-vmagent
     tag: 1.124.0-debian-12-r0
     pullPolicy: IfNotPresent
     pullSecrets: []
