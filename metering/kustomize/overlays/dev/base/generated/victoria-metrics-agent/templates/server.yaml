@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/instance: metering
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: victoria-metrics-agent
-    app.kubernetes.io/version: v1.107.0
+    app.kubernetes.io/version: v1.142.0
     helm.sh/chart: victoria-metrics-agent-0.38.0
 spec:
   updateStrategy: {}
@@ -26,7 +26,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/name: victoria-metrics-agent
       annotations: 
-        checksum/config: 7e4004a6187cf633444804da58e31017edfc7e84bb7040181f017597b59ceece
+        checksum/config: f2c076b9b35cae7c3d00f341eded444b89f433329ed3c1bea2989ebf430f1b47
     spec:
       serviceAccountName: metering-victoria-metrics-agent
       automountServiceAccountToken: true
@@ -36,7 +36,7 @@ spec:
         - name: vmagent
           securityContext: 
             {}
-          image: victoriametrics/vmagent:v1.107.0
+          image: victoriametrics/vmagent:v1.142.0
           imagePullPolicy: IfNotPresent
           workingDir: /
           args: 

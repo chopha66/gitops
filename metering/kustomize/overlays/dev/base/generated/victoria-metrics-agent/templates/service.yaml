@@ -7,7 +7,7 @@ metadata:
     app.kubernetes.io/instance: metering
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: victoria-metrics-agent
-    app.kubernetes.io/version: v1.107.0
+    app.kubernetes.io/version: v1.142.0
     helm.sh/chart: victoria-metrics-agent-0.38.0
   name: metering-victoria-metrics-agent
   namespace: metering

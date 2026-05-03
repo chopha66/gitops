@@ -84,7 +84,7 @@ spec:
             - --storageNode=metering-victoriametrics-vmstorage-2.metering-victoriametrics-vmstorage-headless:8401
             - -search.maxQueryDuration=5m
             - -search.maxConcurrentRequests=16
-            - -dedup.minScrapeInterval=30s
+            - -dedup.minScrapeInterval=1s
           env:
           envFrom:
           resources:

@@ -21,7 +21,7 @@ statefulSet:
 image:
   registry: ""
   repository: victoriametrics/vmagent
-  tag: v1.107.0
+  tag: v1.142.0
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
