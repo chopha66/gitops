@@ -4,8 +4,6 @@ global:
 
 clusterDomain: cluster.local
 
-fullnameOverride: metering
-
 envflagEnable: true
 envflagPrefix: VM_
 loggerFormat: json

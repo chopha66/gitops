@@ -3,7 +3,7 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: metering-vmagent
+  name: metering-victoriametrics-vmagent
   namespace: "metering"
   labels:
     app.kubernetes.io/instance: metering
@@ -44,7 +44,7 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: metering-vmagent
+  name: metering-victoriametrics-vmagent
   namespace: "metering"
   labels:
     app.kubernetes.io/instance: metering
@@ -56,9 +56,9 @@ metadata:
     app.kubernetes.io/component: vmagent
 subjects:
   - kind: ServiceAccount
-    name: metering-vmagent
+    name: metering-victoriametrics-vmagent
     namespace: "metering"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: metering-vmagent
+  name: metering-victoriametrics-vmagent

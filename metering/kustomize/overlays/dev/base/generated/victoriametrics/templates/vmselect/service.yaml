@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: metering-vmselect
+  name: metering-victoriametrics-vmselect
   namespace: "metering"
   labels:
     app.kubernetes.io/instance: metering

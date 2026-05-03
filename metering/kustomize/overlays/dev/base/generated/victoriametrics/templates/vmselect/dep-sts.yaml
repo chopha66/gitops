@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: metering-vmselect
+  name: metering-victoriametrics-vmselect
   namespace: "metering"
   labels:
     app.kubernetes.io/instance: metering
@@ -33,7 +33,7 @@ spec:
         app.kubernetes.io/part-of: victoriametrics
         app.kubernetes.io/component: vmselect
     spec:
-      serviceAccountName: metering-vmselect
+      serviceAccountName: metering-victoriametrics-vmselect
       
       automountServiceAccountToken: false
       affinity:
@@ -79,9 +79,9 @@ spec:
             - --loggerFormat=json
             - --cacheDataPath=/cache
             - --httpListenAddr=:8481
-            - --storageNode=metering-vmstorage-0.metering-vmstorage-headless:8401
-            - --storageNode=metering-vmstorage-1.metering-vmstorage-headless:8401
-            - --storageNode=metering-vmstorage-2.metering-vmstorage-headless:8401
+            - --storageNode=metering-victoriametrics-vmstorage-0.metering-victoriametrics-vmstorage-headless:8401
+            - --storageNode=metering-victoriametrics-vmstorage-1.metering-victoriametrics-vmstorage-headless:8401
+            - --storageNode=metering-victoriametrics-vmstorage-2.metering-victoriametrics-vmstorage-headless:8401
             - -search.maxQueryDuration=5m
             - -search.maxConcurrentRequests=16
             - -dedup.minScrapeInterval=30s

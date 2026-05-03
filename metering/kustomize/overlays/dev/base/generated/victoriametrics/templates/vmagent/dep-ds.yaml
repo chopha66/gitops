@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: metering-vmagent
+  name: metering-victoriametrics-vmagent
   namespace: "metering"
   labels:
     app.kubernetes.io/instance: metering
@@ -33,7 +33,7 @@ spec:
         app.kubernetes.io/part-of: victoriametrics
         app.kubernetes.io/component: vmagent
     spec:
-      serviceAccountName: metering-vmagent
+      serviceAccountName: metering-victoriametrics-vmagent
       
       automountServiceAccountToken: true
       affinity:
@@ -80,7 +80,7 @@ spec:
             - --httpListenAddr=:8429
             - --promscrape.config=/config/scrape/scrape.yml
             - --remoteWrite.tmpDataPath=/tmpData
-            - --remoteWrite.url=http://metering-vminsert:8480/insert/0/prometheus
+            - --remoteWrite.url=http://metering-victoriametrics-vminsert:8480/insert/0/prometheus
             - -promscrape.cluster.membersCount=3
             - -promscrape.cluster.replicationFactor=1
             - -remoteWrite.url=http://metering-victoriametrics-vminsert:8480/insert/0/prometheus
