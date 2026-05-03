@@ -34,12 +34,6 @@ data:
           - source_labels: [__name__]
             regex: 'container_cpu_usage_seconds_total'
             action: keep
-          - source_labels: [container]
-            regex: ''
-            action: drop
-          - source_labels: [container]
-            regex: 'POD'
-            action: drop
 
       # ===== Pod Memory =====
       - job_name: 'pod-memory'
@@ -63,9 +57,3 @@ data:
           - source_labels: [__name__]
             regex: 'container_memory_working_set_bytes'
             action: keep
-          - source_labels: [container]
-            regex: ''
-            action: drop
-          - source_labels: [container]
-            regex: 'POD'
-            action: drop
