@@ -61,7 +61,7 @@ spec:
         sysctls: []
       containers:
         - name: vmstorage
-          image: victoriametrics/vmstorage:v1.142.0
+          image: victoriametrics/vmstorage:latest
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false

@@ -58,7 +58,7 @@ spec:
         sysctls: []
       containers:
         - name: vmalert
-          image: victoriametrics/vmalert:v1.142.0
+          image: victoriametrics/vmalert:latest
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false

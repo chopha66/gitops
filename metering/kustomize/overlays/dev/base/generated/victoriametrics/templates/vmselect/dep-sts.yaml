@@ -58,7 +58,7 @@ spec:
         sysctls: []
       containers:
         - name: vmselect
-          image: victoriametrics/vmselect:v1.142.0
+          image: victoriametrics/vmselect:latest
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false

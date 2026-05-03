@@ -13,7 +13,7 @@ vmselect:
   image:
     registry: ""
     repository: victoriametrics/vmselect
-    tag: v1.142.0
+    tag: latest
     pullPolicy: IfNotPresent
 
   replicaCount: 2
@@ -69,7 +69,7 @@ vminsert:
   image:
     registry: ""
     repository: victoriametrics/vminsert
-    tag: v1.142.0
+    tag: latest
     pullPolicy: IfNotPresent
     pullSecrets: []
 
@@ -110,7 +110,7 @@ vmstorage:
   image:
     registry: ""
     repository: victoriametrics/vmstorage
-    tag: v1.142.0
+    tag: latest
     pullPolicy: IfNotPresent
     pullSecrets: []
 
@@ -162,7 +162,7 @@ vmalert:
   image:
     registry: ""
     repository: victoriametrics/vmalert
-    tag: v1.142.0
+    tag: latest
     pullPolicy: IfNotPresent
     pullSecrets: []
 

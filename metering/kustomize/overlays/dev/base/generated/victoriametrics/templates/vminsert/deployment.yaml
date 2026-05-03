@@ -58,7 +58,7 @@ spec:
         sysctls: []
       containers:
         - name: vminsert
-          image: victoriametrics/vminsert:v1.142.0
+          image: victoriametrics/vminsert:latest
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
