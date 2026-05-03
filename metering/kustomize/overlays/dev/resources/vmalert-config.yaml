@@ -4,7 +4,7 @@ metadata:
   name: vmalert-config
   namespace: metering
 data:
-  recording.yaml: |
+  alert-rules.yaml: |
     groups:
       - name: pod-recording
         interval: 30s

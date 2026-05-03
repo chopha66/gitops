@@ -106,7 +106,7 @@ spec:
             - --remoteWrite.url=http://{{ $remoteWriteHost }}:{{ $remoteWritePort }}/insert/0/prometheus
             {{- $remoteReadHost := ternary (include "victoriametrics.vmauth.fullname" .) (include "victoriametrics.vmselect.fullname" .) .Values.vmauth.enabled }}
             {{- $remoteReadPort := ternary .Values.vmauth.service.ports.http .Values.vmselect.service.ports.http .Values.vmauth.enabled }}
-            - --remoteWrite.url=http://{{ $remoteWriteHost }}:{{ $remoteWritePort }}/select/0/prometheus
+            - --remoteRead.url=http://{{ $remoteWriteHost }}:{{ $remoteWritePort }}/select/0/prometheus
             {{- if .Values.vmalert.datasourceUrl }}
             - --datasource.url={{ .Values.vmalert.datasourceUrl }}
             {{- else }}

@@ -3,7 +3,7 @@
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  name: metering-victoriametrics-vmselect
+  name: metering-vmselect
   namespace: "metering"
   labels:
     app.kubernetes.io/instance: metering

@@ -4,7 +4,7 @@ metadata:
   name: vmagent-scrape-config
   namespace: metering
 data:
-  scrape.yaml: |
+  scrape.yml: |
     global:
       scrape_interval: 30s
       scrape_timeout: 10s

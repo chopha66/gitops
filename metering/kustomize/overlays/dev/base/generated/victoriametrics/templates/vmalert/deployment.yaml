@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: metering-victoriametrics-vmalert
+  name: metering-vmalert
   namespace: "metering"
   labels:
     app.kubernetes.io/instance: metering
@@ -33,7 +33,7 @@ spec:
         app.kubernetes.io/part-of: victoriametrics
         app.kubernetes.io/component: vmalert
     spec:
-      serviceAccountName: metering-victoriametrics-vmalert
+      serviceAccountName: metering-vmalert
       
       automountServiceAccountToken: true
       affinity:
@@ -79,11 +79,9 @@ spec:
             - --loggerFormat=json
             - --httpListenAddr=:8429
             - --rule=/config/alert-rules.yaml
-            - --remoteWrite.url=http://metering-victoriametrics-vminsert:8480/insert/0/prometheus
-            - --remoteWrite.url=http://metering-victoriametrics-vminsert:8480/select/0/prometheus
-            - --datasource.url=http://vm-vmselect.metering.svc.cluster.local:8481/select/0/prometheus
-            - -remoteWrite.url=http://vm-vminsert.metering.svc.cluster.local:8480/insert/0/prometheus
-            - -remoteRead.url=http://vm-vmselect.metering.svc.cluster.local:8481/select/0/prometheus
+            - --remoteWrite.url=http://metering-vminsert:8480/insert/0/prometheus
+            - --remoteRead.url=http://metering-vminsert:8480/select/0/prometheus
+            - --datasource.url=http://metering-vmselect:8481/select/0/prometheus
             - -evaluationInterval=30s
             - -external.label=cluster=central
           env:

@@ -3,7 +3,7 @@
 apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
-  name: metering-victoriametrics-vmstorage
+  name: metering-vmstorage
   namespace: "metering"
   labels:
     app.kubernetes.io/instance: metering

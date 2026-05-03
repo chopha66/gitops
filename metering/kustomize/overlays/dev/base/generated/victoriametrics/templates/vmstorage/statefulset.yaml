@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: metering-victoriametrics-vmstorage
+  name: metering-vmstorage
   namespace: "metering"
   labels:
     app.kubernetes.io/instance: metering
@@ -15,7 +15,7 @@ metadata:
     app.kubernetes.io/component: vmstorage
 spec:
   replicas: 3
-  serviceName: metering-victoriametrics-vmstorage-headless
+  serviceName: metering-vmstorage-headless
   podManagementPolicy: Parallel
   updateStrategy:
     type: RollingUpdate
@@ -36,7 +36,7 @@ spec:
         app.kubernetes.io/part-of: victoriametrics
         app.kubernetes.io/component: vmstorage
     spec:
-      serviceAccountName: metering-victoriametrics-vmstorage
+      serviceAccountName: metering-vmstorage
       
       automountServiceAccountToken: false
       affinity:

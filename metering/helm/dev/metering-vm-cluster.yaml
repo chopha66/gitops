@@ -4,6 +4,8 @@ global:
 
 clusterDomain: cluster.local
 
+fullnameOverride: metering
+
 envflagEnable: true
 envflagPrefix: VM_
 loggerFormat: json
@@ -175,13 +177,11 @@ vmalert:
     limits:
       memory: 512Mi
 
-  datasourceUrl: "http://vm-vmselect.metering.svc.cluster.local:8481/select/0/prometheus"
+  datasourceUrl: "http://metering-vmselect:8481/select/0/prometheus"
 
   notifierUrl: ""
 
   extraArgs:
-    - "-remoteWrite.url=http://vm-vminsert.metering.svc.cluster.local:8480/insert/0/prometheus"
-    - "-remoteRead.url=http://vm-vmselect.metering.svc.cluster.local:8481/select/0/prometheus"
     - "-evaluationInterval=30s"
     - "-external.label=cluster=central"
 
@@ -222,7 +222,7 @@ vmagent:
   extraArgs:
     - "-promscrape.cluster.membersCount=3"
     - "-promscrape.cluster.replicationFactor=1"
-    - "-remoteWrite.url=http://vm-vminsert.monitoring.svc.cluster.local:8480/insert/0/prometheus"
+    - "-remoteWrite.url=http://metering-victoriametrics-vminsert:8480/insert/0/prometheus"
     - "-remoteWrite.maxDiskUsagePerURL=500MB"
     - "-remoteWrite.queues=8"
     - "-remoteWrite.label=monitor=vm-central"
