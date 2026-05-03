@@ -83,10 +83,15 @@ spec:
             - --remoteWrite.url=http://metering-victoriametrics-vminsert:8480/insert/0/prometheus
             - -promscrape.cluster.membersCount=3
             - -promscrape.cluster.replicationFactor=1
+            - -promscrape.cluster.memberNum=%{POD_NAME}
             - -remoteWrite.maxDiskUsagePerURL=500MB
             - -remoteWrite.queues=8
             - -remoteWrite.label=monitor=vm-central
           env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           envFrom:
           resources:
             limits:

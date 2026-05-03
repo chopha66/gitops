@@ -220,9 +220,16 @@ vmagent:
   extraArgs:
     - "-promscrape.cluster.membersCount=3"
     - "-promscrape.cluster.replicationFactor=1"
+    - "-promscrape.cluster.memberNum=%{POD_NAME}"
     - "-remoteWrite.maxDiskUsagePerURL=500MB"
     - "-remoteWrite.queues=8"
     - "-remoteWrite.label=monitor=vm-central"
+
+  extraEnvVars:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
 
   existingScrapeConfigMap: "vmagent-scrape-config"
 
