@@ -11,9 +11,9 @@ loggerFormat: json
 ## @section VictoriaMetrics Select Parameters
 vmselect:
   image:
-    registry: docker.io
-    repository: bitnamilegacy/victoriametrics-vmselect
-    tag: 1.124.0-debian-12-r0
+    registry: ""
+    repository: victoriametrics/vmselect
+    tag: v1.142.0
     pullPolicy: IfNotPresent
 
   replicaCount: 2
@@ -67,9 +67,9 @@ vmselect:
 ##
 vminsert:
   image:
-    registry: docker.io
-    repository: bitnamilegacy/victoriametrics-vminsert
-    tag: 1.124.0-debian-12-r0
+    registry: ""
+    repository: victoriametrics/vminsert
+    tag: v1.142.0
     pullPolicy: IfNotPresent
     pullSecrets: []
 
@@ -108,9 +108,9 @@ vminsert:
 
 vmstorage:
   image:
-    registry: docker.io
-    repository: bitnamilegacy/victoriametrics-vmstorage
-    tag: 1.124.0-debian-12-r0
+    registry: ""
+    repository: victoriametrics/vmstorage
+    tag: v1.142.0
     pullPolicy: IfNotPresent
     pullSecrets: []
 
@@ -160,9 +160,9 @@ vmauth:
 vmalert:
   enabled: true
   image:
-    registry: docker.io
-    repository: bitnamilegacy/victoriametrics-vmalert
-    tag: 1.124.0-debian-12-r0
+    registry: ""
+    repository: victoriametrics/vmalert
+    tag: v1.142.0
     pullPolicy: IfNotPresent
     pullSecrets: []
 
@@ -198,47 +198,3 @@ vmalert:
 ## @section VictoriaMetrics Agent Parameters
 vmagent:
   enabled: false
-
-  image:
-    registry: docker.io
-    repository: bitnamilegacy/victoriametrics-vmagent
-    tag: 1.124.0-debian-12-r0
-    pullPolicy: IfNotPresent
-    pullSecrets: []
-
-  replicaCount: 3
-
-  resources:
-    requests:
-      cpu: 200m
-      memory: 512Mi
-    limits:
-      memory: 2Gi
-
-  kind: deployment
-
-  extraArgs:
-    - "-promscrape.cluster.membersCount=3"
-    - "-promscrape.cluster.memberLabel=instance"
-    - "-promscrape.cluster.replicationFactor=1"
-    - "-remoteWrite.maxDiskUsagePerURL=500MB"
-    - "-remoteWrite.queues=8"
-    - "-remoteWrite.label=monitor=vm-central"
-
-  existingScrapeConfigMap: "vmagent-scrape-config"
-
-  affinity: {}
-  nodeSelector: {}
-  tolerations: []
-
-  networkPolicy:
-    enabled: true
-    allowExternal: true
-    allowExternalEgress: true
-    extraIngress: []
-    extraEgress: []
-    ingressNSMatchLabels: {}
-    ingressNSPodMatchLabels: {}
-
-  metrics:
-    enabled: true
