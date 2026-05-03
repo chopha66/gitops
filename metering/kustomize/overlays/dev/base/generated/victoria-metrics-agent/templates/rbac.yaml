@@ -1,0 +1,57 @@
+---
+# Source: victoria-metrics-agent/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: metering-victoria-metrics-agent
+  labels: 
+    app.kubernetes.io/instance: metering
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: victoria-metrics-agent
+    app.kubernetes.io/version: v1.107.0
+    helm.sh/chart: victoria-metrics-agent-0.38.0
+rules:
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/metrics
+  verbs: ["get", "list", "watch"]
+- nonResourceURLs: 
+  - /metrics
+  verbs: ["get"]
+---
+# Source: victoria-metrics-agent/templates/rbac.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: metering-victoria-metrics-agent
+  labels: 
+    app.kubernetes.io/instance: metering
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: victoria-metrics-agent
+    app.kubernetes.io/version: v1.107.0
+    helm.sh/chart: victoria-metrics-agent-0.38.0
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: metering-victoria-metrics-agent
+subjects:
+  - kind: ServiceAccount
+    name: metering-victoria-metrics-agent
+    namespace: metering

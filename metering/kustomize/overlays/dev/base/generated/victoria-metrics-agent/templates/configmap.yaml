@@ -1,0 +1,15 @@
+---
+# Source: victoria-metrics-agent/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: metering-victoria-metrics-agent-rw
+  namespace: metering
+  labels: 
+    app.kubernetes.io/instance: metering
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: victoria-metrics-agent
+    app.kubernetes.io/version: v1.107.0
+    helm.sh/chart: victoria-metrics-agent-0.38.0
+data: 
+  {}

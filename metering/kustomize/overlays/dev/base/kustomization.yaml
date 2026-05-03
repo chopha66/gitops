@@ -2,12 +2,11 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
-  - generated/victoriametrics/templates/vmagent/dep-ds.yaml
-  - generated/victoriametrics/templates/vmagent/networkpolicy.yaml
-  - generated/victoriametrics/templates/vmagent/pdb.yaml
-  - generated/victoriametrics/templates/vmagent/rbac.yaml
-  - generated/victoriametrics/templates/vmagent/service.yaml
-  - generated/victoriametrics/templates/vmagent/service-account.yaml
+  - generated/victoria-metrics-agent/templates/configmap.yaml
+  - generated/victoria-metrics-agent/templates/rbac.yaml
+  - generated/victoria-metrics-agent/templates/server.yaml
+  - generated/victoria-metrics-agent/templates/service.yaml
+  - generated/victoria-metrics-agent/templates/serviceaccount.yaml
   - generated/victoriametrics/templates/vmalert/deployment.yaml
   - generated/victoriametrics/templates/vmalert/networkpolicy.yaml
   - generated/victoriametrics/templates/vmalert/pdb.yaml

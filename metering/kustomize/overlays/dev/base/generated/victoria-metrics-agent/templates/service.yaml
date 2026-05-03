@@ -1,0 +1,23 @@
+---
+# Source: victoria-metrics-agent/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels: 
+    app.kubernetes.io/instance: metering
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: victoria-metrics-agent
+    app.kubernetes.io/version: v1.107.0
+    helm.sh/chart: victoria-metrics-agent-0.38.0
+  name: metering-victoria-metrics-agent
+  namespace: metering
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      port: 8429
+      protocol: TCP
+      targetPort: http
+  selector: 
+    app.kubernetes.io/instance: metering
+    app.kubernetes.io/name: victoria-metrics-agent

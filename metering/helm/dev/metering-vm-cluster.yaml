@@ -197,7 +197,7 @@ vmalert:
 
 ## @section VictoriaMetrics Agent Parameters
 vmagent:
-  enabled: true
+  enabled: false
 
   image:
     registry: docker.io

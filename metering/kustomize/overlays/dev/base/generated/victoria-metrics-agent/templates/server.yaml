@@ -1,0 +1,100 @@
+---
+# Source: victoria-metrics-agent/templates/server.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: metering-victoria-metrics-agent
+  namespace: metering
+  labels: 
+    app.kubernetes.io/instance: metering
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: victoria-metrics-agent
+    app.kubernetes.io/version: v1.107.0
+    helm.sh/chart: victoria-metrics-agent-0.38.0
+spec:
+  updateStrategy: {}
+  replicas: 3
+  serviceName: metering-victoria-metrics-agent
+  selector:
+    matchLabels: 
+      app.kubernetes.io/instance: metering
+      app.kubernetes.io/name: victoria-metrics-agent
+  template:
+    metadata:
+      labels: 
+        app.kubernetes.io/instance: metering
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: victoria-metrics-agent
+      annotations: 
+        checksum/config: 7e4004a6187cf633444804da58e31017edfc7e84bb7040181f017597b59ceece
+    spec:
+      serviceAccountName: metering-victoria-metrics-agent
+      automountServiceAccountToken: true
+      securityContext: 
+        {}
+      containers:
+        - name: vmagent
+          securityContext: 
+            {}
+          image: victoriametrics/vmagent:v1.107.0
+          imagePullPolicy: IfNotPresent
+          workingDir: /
+          args: 
+            - --envflag.enable
+            - --envflag.prefix=VM_
+            - --httpListenAddr=:8429
+            - --loggerFormat=json
+            - --promscrape.cluster.memberNum=$(POD_NAME)
+            - --promscrape.cluster.membersCount=3
+            - --promscrape.cluster.replicationFactor=1
+            - --promscrape.config=/config/scrape/scrape.yml
+            - --remoteWrite.label=monitor=vm-central
+            - --remoteWrite.maxDiskUsagePerURL=500MB
+            - --remoteWrite.queues=8
+            - --remoteWrite.tmpDataPath=/tmpData
+            - --remoteWrite.url=http://metering-victoriametrics-vminsert:8480/insert/0/prometheus
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          ports:
+            - name: http
+              containerPort: 8429
+          readinessProbe: 
+            httpGet:
+              path: /health
+              port: http
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+          livenessProbe: 
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            tcpSocket:
+              port: http
+            timeoutSeconds: 5
+          resources: 
+            limits:
+              memory: 2Gi
+            requests:
+              cpu: 200m
+              memory: 512Mi
+          volumeMounts:
+            - name: tmpdata
+              mountPath: /tmpData
+            - name: scrape-config
+              mountPath: /config/scrape
+            - name: rw-config
+              mountPath: /config/rw
+            
+      volumes:
+        - name: tmpdata
+          emptyDir: 
+            {}
+        - name: rw-config
+          configMap:
+            name: metering-victoria-metrics-agent-rw
+        - name: scrape-config
+          configMap:
+            name: vmagent-scrape-config

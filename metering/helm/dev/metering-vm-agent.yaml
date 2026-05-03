@@ -1,0 +1,95 @@
+global:
+  imagePullSecrets: []
+  image:
+    registry: ""
+  cluster:
+    dnsDomain: cluster.local.
+
+replicaCount: 3
+
+mode: statefulSet
+
+# -- [K8s StatefulSet](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/) specific variables
+statefulSet:
+  clusterMode: true
+  replicationFactor: 1
+  spec:
+    # -- StatefulSet update strategy. Check [here](https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#update-strategies) for details.
+    updateStrategy: {}
+      # type: RollingUpdate
+
+image:
+  registry: ""
+  repository: victoriametrics/vmagent
+  tag: v1.107.0
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+
+remoteWrite:
+  - url: http://metering-victoriametrics-vminsert:8480/insert/0/prometheus
+
+extraArgs:
+  envflag.enable: true
+  envflag.prefix: VM_
+  loggerFormat: json
+  httpListenAddr: :8429
+  remoteWrite.maxDiskUsagePerURL: 500MB
+  remoteWrite.queues: 8
+  remoteWrite.label: monitor=vm-central
+
+service:
+  # -- Enable agent service
+  enabled: true
+  # -- Service annotations
+  annotations: {}
+  # -- Service labels
+  extraLabels: {}
+  # -- Service ClusterIP
+  clusterIP: ""
+  # -- Service external IPs. Check [here](https://kubernetes.io/docs/concepts/services-networking/service/#external-ips) for details
+  externalIPs: []
+  # -- Service load balancer IP
+  loadBalancerIP: ""
+  # -- Load balancer source range
+  loadBalancerSourceRanges: []
+  # -- Service port
+  servicePort: 8429
+  # -- Target port
+  targetPort: http
+  # nodePort: 30000
+  # -- Service type
+  type: ClusterIP
+  # -- Service IP family policy. Check [here](https://kubernetes.io/docs/concepts/services-networking/dual-stack/#services) for details.
+  ipFamilyPolicy: ""
+  # -- List of service IP families. Check [here](https://kubernetes.io/docs/concepts/services-networking/dual-stack/#services) for details.
+  ipFamilies: []
+  # -- Service external traffic policy. Check [here](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip) for details
+  externalTrafficPolicy: ""
+  # -- Service internal traffic policy. Check [here](https://kubernetes.io/docs/concepts/services-networking/service/#internal-traffic-policy) for details
+  internalTrafficPolicy: ""
+  # -- Health check node port for a service. Check [here](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip) for details
+  healthCheckNodePort: ""
+  # -- Traffic Distribution. Check [Traffic distribution](https://kubernetes.io/docs/concepts/services-networking/service/#traffic-distribution)
+  trafficDistribution: ""
+  # -- Extra selector labels common for service only
+  selectorLabels: {}
+
+resources:
+  requests:
+    cpu: 200m
+    memory: 512Mi
+  limits:
+    memory: 2Gi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+configMap: vmagent-scrape-config
+
+# -- Empty dir configuration for a case, when persistence is disabled
+emptyDir: {}
+
+# -- Extra scrape configs that will be appended to `config`
+extraScrapeConfigs: []
