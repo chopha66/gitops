@@ -206,7 +206,7 @@ vmagent:
     pullPolicy: IfNotPresent
     pullSecrets: []
 
-  replicaCount: 3
+  replicaCount: 1
 
   resources:
     requests:
@@ -219,17 +219,11 @@ vmagent:
 
   extraArgs:
     - "-promscrape.cluster.membersCount=3"
+    - "-promscrape.cluster.memberLabel=instance"
     - "-promscrape.cluster.replicationFactor=1"
-    - "-promscrape.cluster.memberNum=%{POD_NAME}"
     - "-remoteWrite.maxDiskUsagePerURL=500MB"
     - "-remoteWrite.queues=8"
     - "-remoteWrite.label=monitor=vm-central"
-
-  extraEnvVars:
-    - name: POD_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: metadata.name
 
   existingScrapeConfigMap: "vmagent-scrape-config"
 
