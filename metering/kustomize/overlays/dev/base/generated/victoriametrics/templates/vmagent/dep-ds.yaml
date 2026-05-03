@@ -14,7 +14,7 @@ metadata:
     app.kubernetes.io/part-of: victoriametrics
     app.kubernetes.io/component: vmagent
 spec:
-  replicas: 1
+  replicas: 3
   strategy:
     type: RollingUpdate
   selector:
@@ -81,7 +81,9 @@ spec:
             - --promscrape.config=/config/scrape/scrape.yml
             - --remoteWrite.tmpDataPath=/tmpData
             - --remoteWrite.url=http://metering-victoriametrics-vminsert:8480/insert/0/prometheus
+            - -promscrape.cluster.membersCount=3
             - -promscrape.cluster.memberLabel=instance
+            - -promscrape.cluster.replicationFactor=2
             - -remoteWrite.maxDiskUsagePerURL=500MB
             - -remoteWrite.queues=8
             - -remoteWrite.label=monitor=vm-central

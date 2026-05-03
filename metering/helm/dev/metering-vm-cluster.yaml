@@ -206,7 +206,7 @@ vmagent:
     pullPolicy: IfNotPresent
     pullSecrets: []
 
-  replicaCount: 1
+  replicaCount: 3
 
   resources:
     requests:
@@ -218,7 +218,9 @@ vmagent:
   kind: deployment
 
   extraArgs:
+    - "-promscrape.cluster.membersCount=3"
     - "-promscrape.cluster.memberLabel=instance"
+    - "-promscrape.cluster.replicationFactor=2"
     - "-remoteWrite.maxDiskUsagePerURL=500MB"
     - "-remoteWrite.queues=8"
     - "-remoteWrite.label=monitor=vm-central"
