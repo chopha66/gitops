@@ -83,7 +83,6 @@ spec:
             - --remoteWrite.url=http://metering-victoriametrics-vminsert:8480/insert/0/prometheus
             - -promscrape.cluster.membersCount=3
             - -promscrape.cluster.replicationFactor=1
-            - -remoteWrite.url=http://metering-victoriametrics-vminsert:8480/insert/0/prometheus
             - -remoteWrite.maxDiskUsagePerURL=500MB
             - -remoteWrite.queues=8
             - -remoteWrite.label=monitor=vm-central
