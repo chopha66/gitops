@@ -220,7 +220,7 @@ vmagent:
   extraArgs:
     - "-promscrape.cluster.membersCount=3"
     - "-promscrape.cluster.memberLabel=instance"
-    - "-promscrape.cluster.replicationFactor=2"
+    - "-promscrape.cluster.replicationFactor=1"
     - "-remoteWrite.maxDiskUsagePerURL=500MB"
     - "-remoteWrite.queues=8"
     - "-remoteWrite.label=monitor=vm-central"
