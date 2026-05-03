@@ -38,6 +38,15 @@ extraArgs:
   remoteWrite.queues: 8
   remoteWrite.label: monitor=vm-central
 
+rbac:
+  create: true
+  extraRules:
+    - apiGroups: [ "" ]
+      resources:
+        - nodes/proxy
+        - nodes/stats
+      verbs: [ "get", "list", "watch" ]
+
 service:
   # -- Enable agent service
   enabled: true

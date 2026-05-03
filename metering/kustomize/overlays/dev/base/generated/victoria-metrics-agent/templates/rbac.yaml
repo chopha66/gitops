@@ -27,6 +27,15 @@ rules:
   resources:
   - ingresses
   verbs: ["get", "list", "watch"]
+- apiGroups:
+  - ""
+  resources:
+  - nodes/proxy
+  - nodes/stats
+  verbs:
+  - get
+  - list
+  - watch
 - apiGroups: [""]
   resources:
   - nodes
